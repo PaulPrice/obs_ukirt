@@ -8,7 +8,7 @@ config.parse.translation = {
     'project': 'PROJECT',
     'object': 'OBJECT',
     'obsType': 'OBSTYPE',
-    'visit': 'OBSNUM',
+    #'visit': 'OBSNUM',
     'ccd': 'CAMNUM',
     'grp': 'GRPNUM',
     'dateObs': 'DATE-OBS',
@@ -20,6 +20,7 @@ config.parse.defaults = {
 }
 
 config.parse.translators = {
+    'visit': 'translate_visit',
     'date': 'translate_date',
     'project': 'translate_project',
 }

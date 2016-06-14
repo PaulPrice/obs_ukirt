@@ -65,6 +65,7 @@ class CasuWfcamMapper(CameraMapper):
             raise RuntimeError("You have more filters defined than fit into the %d bits allocated" %
                                CasuWfcamMapper._nbit_filter)
 
+
     def map(self, datasetType, dataId, write=False):
         """Need to strip 'flags' argument from map
 
@@ -90,15 +91,6 @@ class CasuWfcamMapper(CameraMapper):
         """since we have no defects, return an empty list.  Fix this when defects exist """
         return []
 
-    # def std_raw(self, item, dataId):
-    #     md = item.getMetadata()
-    #     # afw doesn't understand ZPN
-    #     md.set("CTYPE1", "RA---TAN")
-    #     md.set("CTYPE2", "DEC--TAN")
-    #     md.remove("PV2_1")
-    #     md.remove("PV2_2")
-    #     md.remove("PV2_3")
-    #    return CameraMapper.std_raw(self, item, dataId)
 
     def std_raw(self, image, dataId):
         """Standardize a raw dataset by converting it to an Exposure instead of an Image"""
@@ -109,7 +101,7 @@ class CasuWfcamMapper(CameraMapper):
             exposure = image
         md = image.getMetadata()
 
-        if False:
+        if True:
             wcs = afwImage.makeWcs(md, True)
 
             # The CASU WCSes use ZPN; our stuff wants TAN
@@ -132,9 +124,15 @@ class CasuWfcamMapper(CameraMapper):
 #        import pdb;pdb.set_trace()
 
         exposure.setMetadata(md)
+        #newWcs = afwImage.makeWcs(refSky, refPix, xPixelScale, 0.0, 0.0, yPixelScale)
+        #wcs = afwImage.makeWcs(md, True)
+        #exposure.setWcs(newWcs)
+        exposure.setWcs(wcs)
 
-        newWcs = afwImage.makeWcs(refSky, refPix, xPixelScale, 0.0, 0.0, yPixelScale)
-        exposure.setWcs(newWcs)
+        """ Set up exposure time """
+        pathId = self._transformId(dataId)
+        expTime = pathId['expTime']
+        exposure.getCalib().setExptime(expTime)
 
         return self._standardizeExposure(self.exposures['raw'], exposure, dataId,
                                          trimmed=False)
